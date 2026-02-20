@@ -2,8 +2,6 @@ package com.r4men.game_night.event;
 
 import com.r4men.game_night.GameNight;
 import com.r4men.game_night.command.ChessCommand;
-import com.r4men.game_night.command.ReturnHomeCommand;
-import com.r4men.game_night.command.SetHomeCommand;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -14,8 +12,6 @@ import net.neoforged.neoforge.server.command.ConfigCommand;
 public class GNEvents {
     @SubscribeEvent
     public static void onCommandsRegister(RegisterCommandsEvent event) {
-        new SetHomeCommand(event.getDispatcher());
-        new ReturnHomeCommand(event.getDispatcher());
         new ChessCommand(event.getDispatcher());
 
         ConfigCommand.register(event.getDispatcher());

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "game_night:block/chess"
+    }
+  }
+}

@@ -1,6 +1,8 @@
 package com.r4men.game_night.datagen;
 
 import com.r4men.game_night.GameNight;
+import com.r4men.game_night.datagen.block.GNBlockStateProvider;
+import com.r4men.game_night.datagen.block.GNBlockTagProvider;
 import com.r4men.game_night.datagen.lang.GNEnUsLanguageProvider;
 import com.r4men.game_night.datagen.recipe.GNRecipeProvider;
 import net.minecraft.core.HolderLookup;
@@ -23,7 +25,9 @@ public class GNDataGenerator {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
         generator.addProvider(event.includeServer(), new GNRecipeProvider(packOutput, lookupProvider));
+        generator.addProvider(event.includeServer(), new GNBlockTagProvider(packOutput, lookupProvider, existingFileHelper));
 
         generator.addProvider(event.includeClient(), new GNEnUsLanguageProvider(packOutput));
+        generator.addProvider(event.includeClient(), new GNBlockStateProvider(packOutput, existingFileHelper));
     }
 }

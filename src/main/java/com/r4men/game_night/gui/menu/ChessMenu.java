@@ -1,11 +1,13 @@
 package com.r4men.game_night.gui.menu;
 
+import com.r4men.game_night.block.entity.ChessBlockEntity;
 import com.r4men.game_night.gui.GNMenuTypes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -22,6 +24,16 @@ public class ChessMenu extends AbstractContainerMenu {
     // null if no en passant is possible
     private int[] enPassantSquare = null;
 
+    // Castling rights
+    private boolean whiteKingsideCastle = true;
+    private boolean whiteQueensideCastle = true;
+    private boolean blackKingsideCastle = true;
+    private boolean blackQueensideCastle = true;
+
+    // Halfmove clock (for 50-move rule) and fullmove number
+    private int halfmoveClock = 0;
+    private int fullmoveNumber = 1;
+
     // Time control (in milliseconds)
     private long whiteTimeMs;
     private long blackTimeMs;
@@ -32,25 +44,64 @@ public class ChessMenu extends AbstractContainerMenu {
     private char winner = 0; // 'w' for white, 'b' for black, 0 for none
     private String gameOverReason = "";
 
+    // Pawn promotion
+    private boolean promotionPending = false;
+    private int promotionRow = -1;
+    private int promotionCol = -1;
+
+    // Reference to block entity for saving
+    private final ChessBlockEntity blockEntity;
+
     public ChessMenu(int containerId, Inventory inv, FriendlyByteBuf extraData) {
-        this(containerId);
+        this(containerId, getBlockEntityFromBuffer(inv, extraData));
     }
 
-    public ChessMenu(int pContainerId) {
+    private static ChessBlockEntity getBlockEntityFromBuffer(Inventory inv, FriendlyByteBuf extraData) {
+        if (extraData != null) {
+            BlockPos pos = extraData.readBlockPos();
+            if (inv.player.level().getBlockEntity(pos) instanceof ChessBlockEntity be) {
+                return be;
+            }
+        }
+        return null;
+    }
+
+    public ChessMenu(int pContainerId, ChessBlockEntity blockEntity) {
         super(GNMenuTypes.CHESS_MENU.get(), pContainerId);
-        // Initialize board from starting FEN
-        initBoardFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+        this.blockEntity = blockEntity;
 
-        // Initialize time control: 10 minutes each, 5 second increment
-        long initialTimeMs = 5 * 60 * 1000; // 10 minutes
-        this.incrementMs = 0 * 1000; // 5 seconds
-        this.whiteTimeMs = initialTimeMs;
-        this.blackTimeMs = initialTimeMs;
-        this.lastMoveTimestamp = System.currentTimeMillis();
+        if (blockEntity != null) {
+            // Load data from block entity
+            initBoardFromFen(blockEntity.getFen());
+            this.whiteTimeMs = blockEntity.getWhiteTimeMs();
+            this.blackTimeMs = blockEntity.getBlackTimeMs();
+            this.lastMoveTimestamp = blockEntity.getLastMoveTimestamp();
+            this.incrementMs = blockEntity.getIncrementMs();
+            this.gameStarted = blockEntity.isGameStarted();
+            this.gameOver = blockEntity.isGameOver();
+            this.winner = blockEntity.getWinner();
+            this.gameOverReason = blockEntity.getGameOverReason();
+        } else {
+            // Initialize board from starting FEN (for command-based opening)
+            initBoardFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+
+            // Initialize time control: 5 minutes each, 0 second increment
+            long initialTimeMs = 5 * 60 * 1000; // 5 minutes
+            this.incrementMs = 0; // 0 seconds
+            this.whiteTimeMs = initialTimeMs;
+            this.blackTimeMs = initialTimeMs;
+            this.lastMoveTimestamp = System.currentTimeMillis();
+        }
     }
 
-    private void initBoardFromFen(String fenPosition) {
-        String[] rows = fenPosition.split("/");
+    private void initBoardFromFen(String fen) {
+        // FEN format: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        // Parts: [board] [activeColor] [castlingRights] [enPassant] [halfmove] [fullmove]
+        String[] parts = fen.split(" ");
+
+        // Parse board position (part 0)
+        String boardFen = parts[0];
+        String[] rows = boardFen.split("/");
         for (int row = 0; row < 8; row++) {
             int col = 0;
             for (char c : rows[row].toCharArray()) {
@@ -62,6 +113,46 @@ public class ChessMenu extends AbstractContainerMenu {
                 } else {
                     board[row][col++] = c;
                 }
+            }
+        }
+
+        // Parse active color (part 1) - "w" for white, "b" for black
+        if (parts.length > 1) {
+            whiteToMove = parts[1].equals("w");
+        }
+
+        // Parse castling rights (part 2)
+        if (parts.length > 2) {
+            String castling = parts[2];
+            whiteKingsideCastle = castling.contains("K");
+            whiteQueensideCastle = castling.contains("Q");
+            blackKingsideCastle = castling.contains("k");
+            blackQueensideCastle = castling.contains("q");
+        }
+
+        // Parse en passant square (part 3)
+        if (parts.length > 3 && !parts[3].equals("-")) {
+            String enPassant = parts[3];
+            int col = enPassant.charAt(0) - 'a'; // Convert 'a'-'h' to 0-7
+            int row = 8 - (enPassant.charAt(1) - '0'); // Convert '1'-'8' to 7-0 (row 0 is top)
+            enPassantSquare = new int[]{row, col};
+        }
+
+        // Parse halfmove clock (part 4)
+        if (parts.length > 4) {
+            try {
+                halfmoveClock = Integer.parseInt(parts[4]);
+            } catch (NumberFormatException e) {
+                halfmoveClock = 0;
+            }
+        }
+
+        // Parse fullmove number (part 5)
+        if (parts.length > 5) {
+            try {
+                fullmoveNumber = Integer.parseInt(parts[5]);
+            } catch (NumberFormatException e) {
+                fullmoveNumber = 1;
             }
         }
     }
@@ -544,25 +635,196 @@ public class ChessMenu extends AbstractContainerMenu {
             board[fromRow][fromCol] = 0;
             board[toRow][toCol] = piece;
 
-            // Handle time control
-            long currentTime = System.currentTimeMillis();
-            if (gameStarted) {
-                long elapsed = currentTime - lastMoveTimestamp;
-                if (whiteToMove) {
-                    whiteTimeMs = Math.max(0, whiteTimeMs - elapsed) + incrementMs;
-                } else {
-                    blackTimeMs = Math.max(0, blackTimeMs - elapsed) + incrementMs;
-                }
-            } else {
-                gameStarted = true;
+            // Check for pawn promotion
+            if (lowerPiece == 'p' && (toRow == 0 || toRow == 7)) {
+                // Pawn reached the opposite end - promotion pending
+                promotionPending = true;
+                promotionRow = toRow;
+                promotionCol = toCol;
+                // Don't toggle turn or update time yet - wait for promotion choice
+                return;
             }
-            lastMoveTimestamp = currentTime;
 
-            // Toggle turn
-            whiteToMove = !whiteToMove;
+            // Complete the move (time control, turn toggle, etc.)
+            completeMove();
+        }
+    }
 
-            // Check for checkmate or stalemate
-            checkGameEndConditions();
+    /**
+     * Complete a move after it's been made (handles time, turn, and end conditions).
+     */
+    private void completeMove() {
+        // Handle time control
+        long currentTime = System.currentTimeMillis();
+        if (gameStarted) {
+            long elapsed = currentTime - lastMoveTimestamp;
+            if (whiteToMove) {
+                whiteTimeMs = Math.max(0, whiteTimeMs - elapsed) + incrementMs;
+            } else {
+                blackTimeMs = Math.max(0, blackTimeMs - elapsed) + incrementMs;
+            }
+        } else {
+            gameStarted = true;
+        }
+        lastMoveTimestamp = currentTime;
+
+        // Toggle turn
+        whiteToMove = !whiteToMove;
+
+        // Check for checkmate or stalemate
+        checkGameEndConditions();
+
+        // Save state to block entity
+        saveToBlockEntity();
+    }
+
+    /**
+     * Promote a pawn to the specified piece type.
+     * @param pieceType The piece to promote to: 'q', 'r', 'b', or 'n' (lowercase)
+     */
+    public void promotePawn(char pieceType) {
+        if (promotionPending && promotionRow >= 0 && promotionCol >= 0) {
+            char piece = board[promotionRow][promotionCol];
+            boolean white = isWhite(piece);
+
+            // Convert to appropriate case
+            char promotedPiece = white ? Character.toUpperCase(pieceType) : Character.toLowerCase(pieceType);
+            board[promotionRow][promotionCol] = promotedPiece;
+
+            // Clear promotion state
+            promotionPending = false;
+            promotionRow = -1;
+            promotionCol = -1;
+
+            // Now complete the move
+            completeMove();
+        }
+    }
+
+    /**
+     * Check if a pawn promotion is pending.
+     */
+    public boolean isPromotionPending() {
+        return promotionPending;
+    }
+
+    /**
+     * Get the row where promotion is pending.
+     */
+    public int getPromotionRow() {
+        return promotionRow;
+    }
+
+    /**
+     * Get the column where promotion is pending.
+     */
+    public int getPromotionCol() {
+        return promotionCol;
+    }
+
+    /**
+     * Reset the chess game to the starting position.
+     */
+    public void resetGame() {
+        // Reset board to starting position
+        initBoardFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+
+        // Reset time control
+        long initialTimeMs = 5 * 60 * 1000; // 5 minutes
+        this.whiteTimeMs = initialTimeMs;
+        this.blackTimeMs = initialTimeMs;
+        this.lastMoveTimestamp = System.currentTimeMillis();
+
+        // Reset game state
+        this.gameStarted = false;
+        this.gameOver = false;
+        this.winner = 0;
+        this.gameOverReason = "";
+
+        // Clear promotion state
+        this.promotionPending = false;
+        this.promotionRow = -1;
+        this.promotionCol = -1;
+
+        // Save to block entity
+        saveToBlockEntity();
+    }
+
+    /**
+     * Convert the current board state to FEN notation.
+     */
+    private String boardToFen() {
+        StringBuilder fen = new StringBuilder();
+
+        // Board position
+        for (int row = 0; row < 8; row++) {
+            int emptyCount = 0;
+            for (int col = 0; col < 8; col++) {
+                char piece = board[row][col];
+                if (piece == 0) {
+                    emptyCount++;
+                } else {
+                    if (emptyCount > 0) {
+                        fen.append(emptyCount);
+                        emptyCount = 0;
+                    }
+                    fen.append(piece);
+                }
+            }
+            if (emptyCount > 0) {
+                fen.append(emptyCount);
+            }
+            if (row < 7) {
+                fen.append('/');
+            }
+        }
+
+        // Active color
+        fen.append(' ').append(whiteToMove ? 'w' : 'b');
+
+        // Castling rights
+        fen.append(' ');
+        StringBuilder castling = new StringBuilder();
+        if (whiteKingsideCastle) castling.append('K');
+        if (whiteQueensideCastle) castling.append('Q');
+        if (blackKingsideCastle) castling.append('k');
+        if (blackQueensideCastle) castling.append('q');
+        if (castling.length() == 0) {
+            fen.append('-');
+        } else {
+            fen.append(castling);
+        }
+
+        // En passant square
+        fen.append(' ');
+        if (enPassantSquare != null) {
+            char file = (char) ('a' + enPassantSquare[1]);
+            int rank = 8 - enPassantSquare[0];
+            fen.append(file).append(rank);
+        } else {
+            fen.append('-');
+        }
+
+        // Halfmove clock and fullmove number
+        fen.append(' ').append(halfmoveClock);
+        fen.append(' ').append(fullmoveNumber);
+
+        return fen.toString();
+    }
+
+    /**
+     * Save the current game state to the block entity.
+     */
+    private void saveToBlockEntity() {
+        if (blockEntity != null) {
+            blockEntity.setFen(boardToFen());
+            blockEntity.setWhiteTimeMs(whiteTimeMs);
+            blockEntity.setBlackTimeMs(blackTimeMs);
+            blockEntity.setLastMoveTimestamp(lastMoveTimestamp);
+            blockEntity.setGameStarted(gameStarted);
+            blockEntity.setGameOver(gameOver);
+            blockEntity.setWinner(winner);
+            blockEntity.setGameOverReason(gameOverReason);
         }
     }
 
@@ -573,6 +835,14 @@ public class ChessMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(@NotNull Player player) {
-        return true;
+        if (blockEntity != null) {
+            // Check if player is still within 8 blocks of the chess block
+            return player.distanceToSqr(
+                blockEntity.getBlockPos().getX() + 0.5,
+                blockEntity.getBlockPos().getY() + 0.5,
+                blockEntity.getBlockPos().getZ() + 0.5
+            ) <= 64.0;
+        }
+        return true; // For command-based opening
     }
 }

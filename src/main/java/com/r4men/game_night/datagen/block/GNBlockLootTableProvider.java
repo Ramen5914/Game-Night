@@ -1,6 +1,6 @@
-package com.r4men.cobblemon_manufactory.datagen.block;
+package com.r4men.game_night.datagen.block;
 
-import com.r4men.cobblemon_manufactory.block.CMBlocks;
+import com.r4men.game_night.block.GNBlocks;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -10,20 +10,19 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class CMBlockLootTableProvider extends BlockLootSubProvider {
-    public CMBlockLootTableProvider(HolderLookup.Provider registries) {
+public class GNBlockLootTableProvider extends BlockLootSubProvider {
+    public GNBlockLootTableProvider(HolderLookup.Provider registries) {
         super(Set.of(), FeatureFlags.REGISTRY.allFlags(), registries);
     }
 
     @Override
     protected void generate() {
-        dropSelf(CMBlocks.EXP_QUARTZ_BLOCK.get());
-        dropSelf(CMBlocks.EXP_QUARTZ_TILES.get());
-        dropSelf(CMBlocks.SMALL_EXP_QUARTZ_TILES.get());
+        dropSelf(GNBlocks.CHESS.get());
+        dropSelf(GNBlocks.MONOPOLY.get());
     }
 
     @Override
     protected @NotNull Iterable<Block> getKnownBlocks() {
-        return CMBlocks.BLOCKS.getEntries().stream().map(Holder::value)::iterator;
+        return GNBlocks.BLOCKS.getEntries().stream().map(Holder::value)::iterator;
     }
 }

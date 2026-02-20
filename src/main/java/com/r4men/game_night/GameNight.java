@@ -1,6 +1,8 @@
 package com.r4men.game_night;
 
 import com.mojang.logging.LogUtils;
+import com.r4men.game_night.block.GNBlocks;
+import com.r4men.game_night.block.entity.GNBlockEntities;
 import com.r4men.game_night.gui.GNMenuTypes;
 import com.r4men.game_night.item.GNItems;
 import net.neoforged.api.distmarker.Dist;
@@ -28,14 +30,16 @@ public class GameNight {
 //        CMTabs.register(modEventBus);
 //
         GNItems.register(modEventBus);
-//        CMBlocks.register(modEventBus);
+        GNBlocks.register(modEventBus);
 //        CMFluids.register(modEventBus);
 //        CMFluidTypes.register(modEventBus);
 //
 //        CMDataComponentTypes.register(modEventBus);
 //
 //        CMRecipes.register(modEventBus);
-//
+
+        GNBlockEntities.register(modEventBus);
+
         GNMenuTypes.register(modEventBus);
 
         GNTabs.register(modEventBus);

@@ -41,6 +41,10 @@ public class ChessScreen extends AbstractContainerScreen<ChessMenu> {
     private int dragStartCol = -1;
     private char draggedPiece = 0;
 
+    // Mouse position for hover effects
+    private double mouseX = 0;
+    private double mouseY = 0;
+
     public ChessScreen(ChessMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
 
@@ -108,6 +112,9 @@ public class ChessScreen extends AbstractContainerScreen<ChessMenu> {
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
+
         int startX = (width - imageWidth) / 2;
         int startY = (height - imageHeight) / 2;
 
@@ -172,10 +179,132 @@ public class ChessScreen extends AbstractContainerScreen<ChessMenu> {
                 message = "Draw! " + reason;
             }
             int msgX = boardX + (imageWidth - font.width(message)) / 2;
-            int msgY = boardY + imageHeight / 2 - 5;
+            int msgY = boardY + imageHeight / 2 - 20;
             guiGraphics.fill(msgX - 5, msgY - 5, msgX + font.width(message) + 5, msgY + 15, 0xCC000000);
             guiGraphics.drawString(font, message, msgX, msgY, 0xFFFF5555);
+
+            // Reset button
+            renderResetButton(guiGraphics, boardX, boardY);
         }
+
+        // Show promotion selection UI
+        if (menu.isPromotionPending()) {
+            renderPromotionSelection(guiGraphics, boardX, boardY);
+        }
+    }
+
+    private void renderPromotionSelection(GuiGraphics guiGraphics, int boardX, int boardY) {
+        // Render semi-transparent overlay
+        guiGraphics.fill(boardX, boardY, boardX + imageWidth, boardY + imageHeight, 0x88000000);
+
+        // Render promotion choices in the center
+        int centerX = boardX + imageWidth / 2;
+        int centerY = boardY + imageHeight / 2;
+        int boxWidth = TILE_SIZE * 4 + 30; // Add more padding
+        int boxHeight = TILE_SIZE + 35;
+        int boxX = centerX - boxWidth / 2;
+        int boxY = centerY - boxHeight / 2;
+
+        // Background box
+        guiGraphics.fill(boxX, boxY, boxX + boxWidth, boxY + boxHeight, 0xFFCCCCCC);
+
+        // Title (without shadow)
+        String title = "Choose Promotion:";
+        int titleX = centerX - font.width(title) / 2;
+        guiGraphics.drawString(font, title, titleX, boxY + 8, 0xFF000000, false);
+
+        // Render piece choices: Queen, Rook, Bishop, Knight
+        char[] pieces = {'q', 'r', 'b', 'n'};
+        boolean isWhite = menu.getPiece(menu.getPromotionRow(), menu.getPromotionCol()) != 0 &&
+                         Character.isUpperCase(menu.getPiece(menu.getPromotionRow(), menu.getPromotionCol()));
+
+        // Calculate proper centering for pieces
+        int totalPiecesWidth = TILE_SIZE * 4 + 3 * 5; // 4 pieces + 3 gaps of 5 pixels
+        int startX = centerX - totalPiecesWidth / 2;
+        int pieceY = boxY + 22; // Position below title
+
+        for (int i = 0; i < pieces.length; i++) {
+            int pieceX = startX + i * (TILE_SIZE + 5);
+
+            // Highlight on hover
+            int[] coords = getPromotionPieceCoords(mouseX, mouseY);
+            if (coords != null && coords[0] == i) {
+                guiGraphics.fill(pieceX - 2, pieceY - 2, pieceX + TILE_SIZE + 2, pieceY + TILE_SIZE + 2, 0xFFFFFF00);
+            }
+
+            // Render piece
+            char piece = isWhite ? Character.toUpperCase(pieces[i]) : pieces[i];
+            renderPiece(guiGraphics, piece, pieceX, pieceY);
+        }
+    }
+
+    private int[] getPromotionPieceCoords(double mouseX, double mouseY) {
+        if (!menu.isPromotionPending()) return null;
+
+        int boardX = (width - imageWidth) / 2;
+        int boardY = (height - imageHeight) / 2;
+        int centerX = boardX + imageWidth / 2;
+        int centerY = boardY + imageHeight / 2;
+        int boxWidth = TILE_SIZE * 4 + 30;
+        int boxHeight = TILE_SIZE + 35;
+        int boxX = centerX - boxWidth / 2;
+        int boxY = centerY - boxHeight / 2;
+
+        // Calculate proper centering for pieces (same as render method)
+        int totalPiecesWidth = TILE_SIZE * 4 + 3 * 5;
+        int startX = centerX - totalPiecesWidth / 2;
+        int pieceY = boxY + 22;
+
+        for (int i = 0; i < 4; i++) {
+            int pieceX = startX + i * (TILE_SIZE + 5);
+
+            if (mouseX >= pieceX && mouseX < pieceX + TILE_SIZE &&
+                mouseY >= pieceY && mouseY < pieceY + TILE_SIZE) {
+                return new int[]{i};
+            }
+        }
+
+        return null;
+    }
+
+    private void renderResetButton(GuiGraphics guiGraphics, int boardX, int boardY) {
+        String buttonText = "New Game";
+        int buttonWidth = font.width(buttonText) + 20;
+        int buttonHeight = 20;
+        int buttonX = boardX + (imageWidth - buttonWidth) / 2;
+        int buttonY = boardY + imageHeight / 2 + 5;
+
+        // Check if mouse is hovering
+        boolean isHovering = mouseX >= buttonX && mouseX < buttonX + buttonWidth &&
+                           mouseY >= buttonY && mouseY < buttonY + buttonHeight;
+
+        // Button background
+        int bgColor = isHovering ? 0xFF44AA44 : 0xFF228822;
+        guiGraphics.fill(buttonX, buttonY, buttonX + buttonWidth, buttonY + buttonHeight, bgColor);
+
+        // Button border
+        guiGraphics.fill(buttonX, buttonY, buttonX + buttonWidth, buttonY + 1, 0xFF88FF88); // Top
+        guiGraphics.fill(buttonX, buttonY, buttonX + 1, buttonY + buttonHeight, 0xFF88FF88); // Left
+        guiGraphics.fill(buttonX + buttonWidth - 1, buttonY, buttonX + buttonWidth, buttonY + buttonHeight, 0xFF116611); // Right
+        guiGraphics.fill(buttonX, buttonY + buttonHeight - 1, buttonX + buttonWidth, buttonY + buttonHeight, 0xFF116611); // Bottom
+
+        // Button text (without shadow)
+        int textX = buttonX + (buttonWidth - font.width(buttonText)) / 2;
+        int textY = buttonY + (buttonHeight - font.lineHeight) / 2;
+        guiGraphics.drawString(font, buttonText, textX, textY, 0xFFFFFFFF, false);
+    }
+
+    private boolean isResetButtonClicked(double mouseX, double mouseY, int boardX, int boardY) {
+        if (!menu.isGameOver()) return false;
+
+        String buttonText = "New Game";
+        int buttonWidth = font.width(buttonText) + 20;
+        int buttonHeight = 20;
+        int buttonX = boardX + (imageWidth - buttonWidth) / 2;
+        int buttonY = boardY + imageHeight / 2 + 5;
+
+        return mouseX >= buttonX && mouseX < buttonX + buttonWidth &&
+               mouseY >= buttonY && mouseY < buttonY + buttonHeight;
     }
 
     private String formatTime(long timeMs) {
@@ -213,7 +342,33 @@ public class ChessScreen extends AbstractContainerScreen<ChessMenu> {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && !menu.isGameOver()) { // Left click, game not over
+        if (button == 0) { // Left click
+            int boardX = (width - imageWidth) / 2;
+            int boardY = (height - imageHeight) / 2;
+
+            // Handle reset button click
+            if (isResetButtonClicked(mouseX, mouseY, boardX, boardY)) {
+                menu.resetGame();
+                selectedRow = -1;
+                selectedCol = -1;
+                possibleMoves.clear();
+                return true;
+            }
+
+            // Handle promotion selection
+            if (menu.isPromotionPending()) {
+                int[] coords = getPromotionPieceCoords(mouseX, mouseY);
+                if (coords != null) {
+                    char[] pieces = {'q', 'r', 'b', 'n'};
+                    menu.promotePawn(pieces[coords[0]]);
+                    return true;
+                }
+                // Click outside promotion dialog - ignore
+                return true;
+            }
+
+            // Normal move handling (only if game is not over)
+            if (!menu.isGameOver()) {
             int[] coords = getBoardCoords(mouseX, mouseY);
             if (coords != null) {
                 int row = coords[0];
@@ -253,6 +408,7 @@ public class ChessScreen extends AbstractContainerScreen<ChessMenu> {
                     }
                 }
                 return true;
+            }
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
