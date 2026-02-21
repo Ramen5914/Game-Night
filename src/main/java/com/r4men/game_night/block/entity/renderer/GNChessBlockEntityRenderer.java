@@ -31,20 +31,20 @@ public class GNChessBlockEntityRenderer implements BlockEntityRenderer<ChessBloc
 
     private void initializePieceModels() {
         // White pieces (uppercase in FEN)
-        pieceModelLocations.put('P', new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/white_pawn"), "inventory"));
-        pieceModelLocations.put('N', new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/white_knight"), "inventory"));
-        pieceModelLocations.put('B', new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/white_bishop"), "inventory"));
-        pieceModelLocations.put('R', new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/white_rook"), "inventory"));
-        pieceModelLocations.put('Q', new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/white_queen"), "inventory"));
-        pieceModelLocations.put('K', new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/white_king"), "inventory"));
+        pieceModelLocations.put('P', ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/white_pawn")));
+        pieceModelLocations.put('N', ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/white_knight")));
+        pieceModelLocations.put('B', ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/white_bishop")));
+        pieceModelLocations.put('R', ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/white_rook")));
+        pieceModelLocations.put('Q', ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/white_queen")));
+        pieceModelLocations.put('K', ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/white_king")));
 
         // Black pieces (lowercase in FEN)
-        pieceModelLocations.put('p', new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/black_pawn"), "inventory"));
-        pieceModelLocations.put('n', new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/black_knight"), "inventory"));
-        pieceModelLocations.put('b', new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/black_bishop"), "inventory"));
-        pieceModelLocations.put('r', new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/black_rook"), "inventory"));
-        pieceModelLocations.put('q', new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/black_queen"), "inventory"));
-        pieceModelLocations.put('k', new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/black_king"), "inventory"));
+        pieceModelLocations.put('p', ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/black_pawn")));
+        pieceModelLocations.put('n', ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/black_knight")));
+        pieceModelLocations.put('b', ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/black_bishop")));
+        pieceModelLocations.put('r', ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/black_rook")));
+        pieceModelLocations.put('q', ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/black_queen")));
+        pieceModelLocations.put('k', ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/black_king")));
     }
 
     @Override
@@ -138,39 +138,46 @@ public class GNChessBlockEntityRenderer implements BlockEntityRenderer<ChessBloc
             return;
         }
 
-        BakedModel model = minecraft.getModelManager().getModel(modelLocation);
+        try {
+            BakedModel model = minecraft.getModelManager().getModel(modelLocation);
+            if (model == minecraft.getModelManager().getMissingModel()) {
+                return; // Model not found, skip rendering
+            }
 
-        poseStack.pushPose();
+            poseStack.pushPose();
 
-        // Calculate position
-        // Chess board: row 0 is rank 8 (top), row 7 is rank 1 (bottom)
-        // col 0 is file a (left), col 7 is file h (right)
-        float x = boardStartX + (col * squareSize) + (squareSize / 2.0f);
-        float z = boardStartZ + (row * squareSize) + (squareSize / 2.0f);
-        float y = 1.0f / 16.0f; // Slightly above the board surface (board height is 1 pixel)
+            // Calculate position
+            // Chess board: row 0 is rank 8 (top), row 7 is rank 1 (bottom)
+            // col 0 is file a (left), col 7 is file h (right)
+            float x = boardStartX + (col * squareSize) + (squareSize / 2.0f);
+            float z = boardStartZ + (row * squareSize) + (squareSize / 2.0f);
+            float y = 1.0f / 16.0f; // Slightly above the board surface (board height is 1 pixel)
 
-        poseStack.translate(x, y, z);
+            poseStack.translate(x, y, z);
 
-        // Rotate to face the correct direction (models face north by default)
-        poseStack.mulPose(Axis.YP.rotationDegrees(180));
+            // Rotate to face the correct direction (models face north by default)
+            poseStack.mulPose(Axis.YP.rotationDegrees(180));
 
-        // Scale down the piece to fit in the square
-        float scale = squareSize * 0.8f; // 80% of square size for some spacing
-        poseStack.scale(scale, scale, scale);
+            // Scale down the piece to fit in the square
+            float scale = squareSize * 0.8f; // 80% of square size for some spacing
+            poseStack.scale(scale, scale, scale);
 
-        // Render the model using a dummy ItemStack
-        ItemStack dummyStack = new ItemStack(Items.PAPER);
-        minecraft.getItemRenderer().render(
-            dummyStack,
-            ItemDisplayContext.FIXED,
-            false,
-            poseStack,
-            buffer,
-            packedLight,
-            OverlayTexture.NO_OVERLAY,
-            model
-        );
+            // Render the model using a dummy ItemStack
+            ItemStack dummyStack = new ItemStack(Items.PAPER);
+            minecraft.getItemRenderer().render(
+                dummyStack,
+                ItemDisplayContext.FIXED,
+                false,
+                poseStack,
+                buffer,
+                packedLight,
+                OverlayTexture.NO_OVERLAY,
+                model
+            );
 
-        poseStack.popPose();
+            poseStack.popPose();
+        } catch (Exception e) {
+            // Model not loaded or error rendering, skip silently
+        }
     }
 }
