@@ -1,4 +1,4 @@
-package com.r4men.game_night.gui.menu;
+package com.r4men.game_night.gui.chess.menu;
 
 import com.r4men.game_night.block.entity.ChessBlockEntity;
 import com.r4men.game_night.gui.GNMenuTypes;

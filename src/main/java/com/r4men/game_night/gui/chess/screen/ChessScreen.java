@@ -1,7 +1,7 @@
-package com.r4men.game_night.gui.screen;
+package com.r4men.game_night.gui.chess.screen;
 
 import com.r4men.game_night.GameNight;
-import com.r4men.game_night.gui.menu.ChessMenu;
+import com.r4men.game_night.gui.chess.menu.ChessMenu;
 import com.r4men.game_night.util.GNUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
