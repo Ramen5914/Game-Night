@@ -3,8 +3,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"1": "block/chess2",
-		"particle": "block/chess2"
+		"1": "game_night:block/chess",
+		"particle": "game_night:block/chess"
 	},
 	"elements": [
 		{
