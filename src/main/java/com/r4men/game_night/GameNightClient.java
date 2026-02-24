@@ -3,7 +3,7 @@ package com.r4men.game_night;
 import com.r4men.game_night.block.entity.GNBlockEntities;
 import com.r4men.game_night.block.entity.renderer.GNChessBlockEntityRenderer;
 import com.r4men.game_night.gui.GNMenuTypes;
-import com.r4men.game_night.gui.screen.ChessScreen;
+import com.r4men.game_night.gui.chess.screen.ChessScreen;
 
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
@@ -39,14 +39,13 @@ public class GameNightClient {
     }
 
     public static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
-        // Register chess piece models
-        String[] pieces = {"white_pawn", "white_knight", "white_bishop", "white_rook", "white_queen", "white_king",
-                          "black_pawn", "black_knight", "black_bishop", "black_rook", "black_queen", "black_king"};
+        String[] pieces = {"b", "k", "n", "p", "q", "r"};
+        String[] colors = {"black", "white"};
 
-        for (String piece : pieces) {
-            event.register(ModelResourceLocation.standalone(
-                ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/" + piece)
-            ));
+        for (String color : colors) {
+            for (String piece : pieces) {
+                event.register(new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/pieces/" + color + "/" + piece), "standalone"));
+            }
         }
     }
 }
