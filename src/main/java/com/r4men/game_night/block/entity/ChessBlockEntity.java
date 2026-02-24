@@ -1,6 +1,6 @@
 package com.r4men.game_night.block.entity;
 
-import com.r4men.game_night.gui.menu.ChessMenu;
+import com.r4men.game_night.gui.chess.menu.ChessMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -57,6 +57,10 @@ public class ChessBlockEntity extends BlockEntity implements MenuProvider {
     // Getters and setters
     public String getFen() {
         return fen;
+    }
+
+    public boolean isSetup() {
+        return isSetup;
     }
 
     public void setFen(String fen) {
@@ -129,10 +133,6 @@ public class ChessBlockEntity extends BlockEntity implements MenuProvider {
     public void setGameOverReason(String gameOverReason) {
         this.gameOverReason = gameOverReason;
         setChanged();
-    }
-
-    public BlockPos getBlockPos() {
-        return this.worldPosition;
     }
 
     @Override
