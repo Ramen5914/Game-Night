@@ -20,6 +20,7 @@ public class GNEnUsLanguageProvider extends LanguageProvider {
         // Creative Mode Tabs
         add("itemGroup.game_night.gn_tab", GameNight.NAME);
 
-        add("game_night.chess.title", "Chess");
+        add("game_night.games.chess.title", "Chess");
+        add("game_night.configuration.chess", "Chess");
     }
 }

@@ -28,7 +28,7 @@ public class GameNight {
         modEventBus.addListener(this::commonSetup);
 
 //        CMTabs.register(modEventBus);
-//
+
         GNItems.register(modEventBus);
         GNBlocks.register(modEventBus);
 //        CMFluids.register(modEventBus);
