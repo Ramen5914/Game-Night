@@ -19,5 +19,7 @@ public class GNEnUsLanguageProvider extends LanguageProvider {
     protected void addTranslations() {
         // Creative Mode Tabs
         add("itemGroup.game_night.gn_tab", GameNight.NAME);
+
+        add("game_night.chess.title", "Chess");
     }
 }
