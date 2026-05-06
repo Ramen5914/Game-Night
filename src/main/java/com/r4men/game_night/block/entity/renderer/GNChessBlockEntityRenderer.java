@@ -1,22 +1,26 @@
 package com.r4men.game_night.block.entity.renderer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import org.jetbrains.annotations.NotNull;
-
+import org.joml.Matrix4f;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.r4men.game_night.block.entity.ChessBlockEntity;
+import com.r4men.game_night.client.render.chess.ChessPieceBakedModel;
+import com.r4men.game_night.client.render.chess.OutlineJob;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
@@ -25,6 +29,9 @@ public class GNChessBlockEntityRenderer implements BlockEntityRenderer<ChessBloc
     private final Map<Character, String> pieceModelNames = new HashMap<>();
     private final Map<Character, Float> pieceScales = new HashMap<>();
     private final Map<Character, BakedModel> modelCache = new HashMap<>();
+
+    /** Populated each frame by renderPiece(); consumed and cleared by GNOutlineRenderer. */
+    public static final List<OutlineJob> PENDING_OUTLINES = new ArrayList<>();
 
     public GNChessBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
         this.minecraft = Minecraft.getInstance();
@@ -66,6 +73,34 @@ public class GNChessBlockEntityRenderer implements BlockEntityRenderer<ChessBloc
             ModelResourceLocation modelResLoc = ModelResourceLocation.standalone(modelLocation);
             return modelManager.getModel(modelResLoc);
         });
+    }
+
+    private static int getPackedOutlineColor(BakedModel bakedModel, char piece) {
+        if (bakedModel instanceof ChessPieceBakedModel chessPieceBakedModel) {
+            return chessPieceBakedModel.getOutlineColor();
+        }
+
+        int[] fallback = getOutlineColor(piece);
+        return (fallback[0] << 16) | (fallback[1] << 8) | fallback[2];
+    }
+
+    private static int[] getOutlineColor(char piece) {
+        // Distinct per-piece outline palette (upper/lowercase keep separate shades).
+        return switch (piece) {
+            case 'K' -> new int[] {255, 215, 0};
+            case 'Q' -> new int[] {186, 85, 211};
+            case 'R' -> new int[] {70, 130, 255};
+            case 'B' -> new int[] {60, 179, 113};
+            case 'N' -> new int[] {255, 140, 0};
+            case 'P' -> new int[] {220, 20, 60};
+            case 'k' -> new int[] {255, 239, 128};
+            case 'q' -> new int[] {221, 160, 221};
+            case 'r' -> new int[] {135, 206, 250};
+            case 'b' -> new int[] {144, 238, 144};
+            case 'n' -> new int[] {255, 179, 102};
+            case 'p' -> new int[] {255, 99, 132};
+            default -> new int[] {0, 0, 0};
+        };
     }
 
     @Override
@@ -180,7 +215,18 @@ public class GNChessBlockEntityRenderer implements BlockEntityRenderer<ChessBloc
         // Center the model on its position
         poseStack.translate(-0.5f, 0, -0.5f);
 
-        // Render the baked model using the model block renderer
+        // Queue this piece for the deferred silhouette outline pass.
+        // This outlines the final visible piece silhouette rather than extruding each
+        // cube inside the model, which avoids the blocky shell artifact.
+        int outlineColor = getPackedOutlineColor(bakedModel, piece);
+        PENDING_OUTLINES.add(new OutlineJob(
+                bakedModel,
+                new Matrix4f(poseStack.last().pose()),
+                (outlineColor >> 16) & 0xFF,
+                (outlineColor >> 8) & 0xFF,
+                outlineColor & 0xFF));
+
+        // Normal model render
         ModelBlockRenderer renderer = minecraft.getBlockRenderer().getModelRenderer();
         renderer.renderModel(poseStack.last(), buffer.getBuffer(RenderType.cutoutMipped()),
                             null, bakedModel, 1.0f, 1.0f, 1.0f, packedLight, packedOverlay,
