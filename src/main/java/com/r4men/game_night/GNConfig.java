@@ -11,6 +11,8 @@ public class GNConfig {
     private static final ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
     public static final ModConfigSpec CLIENT_SPEC;
 
+    public static final ModConfigSpec.ConfigValue<Long> CHESS_TIME_CONTROL;
+    public static final ModConfigSpec.ConfigValue<Long> GO_TIME_CONTROL;
     public static final ModConfigSpec.ConfigValue<String> WHITE_SQUARE_COLOR;
     public static final ModConfigSpec.ConfigValue<String> WHITE_SQUARE_COLOR_2;
     public static final ModConfigSpec.ConfigValue<String> BLACK_SQUARE_COLOR;
@@ -24,6 +26,11 @@ public class GNConfig {
                 .define("white_square_color", "#FFFFFFFF", GNConfig::validateHexColor);
 
         CLIENT_BUILDER.push("chess");
+
+        CHESS_TIME_CONTROL = CLIENT_BUILDER
+                .comment("Default time (in seconds) on the clocks")
+                .translation("config.game_night.chess.time_control")
+                .define("time_control", 600L);
 
         WHITE_SQUARE_COLOR = CLIENT_BUILDER
                 .comment("ARGB hex color for light board squares. Example: #FFFFFFFF")
@@ -47,6 +54,12 @@ public class GNConfig {
         CLIENT_BUILDER.pop();
 
         CLIENT_BUILDER.push("Go");
+
+        GO_TIME_CONTROL = CLIENT_BUILDER
+                .comment("Default time (in seconds) on the clocks")
+                .translation("config.game_night.go.time_control")
+                .define("time_control", 600L);
+
         CLIENT_BUILDER.pop();
 
         CLIENT_BUILDER.push("Poker");
