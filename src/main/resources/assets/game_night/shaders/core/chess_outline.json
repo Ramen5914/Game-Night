@@ -1,12 +1,4 @@
-{
-    "blend": {
-        "func": "ADD",
-        "srcrgb": "ONE",
-        "dstrgb": "ZERO"
-    },
-    "vertex": "game_night:chess_outline",
-    "fragment": "game_night:chess_outline",
-    "attributes": [
+{}
         "Position",
         "Color"
     ],
