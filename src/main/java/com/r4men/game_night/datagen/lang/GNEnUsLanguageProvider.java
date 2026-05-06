@@ -19,5 +19,14 @@ public class GNEnUsLanguageProvider extends LanguageProvider {
     protected void addTranslations() {
         // Creative Mode Tabs
         add("itemGroup.game_night.gn_tab", GameNight.NAME);
+
+        // Config
+        //// Chess
+        add("game_night.configuration.chess", "Chess");
+        //// Go
+        add("game_night.configuration.go", "Go");
+
+        // Block Entities
+        add("game_night.games.chess.title", "Chess");
     }
 }

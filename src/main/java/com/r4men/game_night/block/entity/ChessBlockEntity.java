@@ -1,6 +1,7 @@
 package com.r4men.game_night.block.entity;
 
 import com.r4men.game_night.gui.chess.menu.ChessMenu;
+import com.r4men.game_night.gui.chess.menu.ChessSetupMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public class ChessBlockEntity extends BlockEntity implements MenuProvider {
     private String fen;
     private boolean isSetup;
+    private long timeControl; // Seconds
     private long whiteTimeMs;
     private long blackTimeMs;
     private long lastMoveTimestamp;
@@ -34,8 +36,8 @@ public class ChessBlockEntity extends BlockEntity implements MenuProvider {
 
         fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         isSetup = false;
-        whiteTimeMs = 5 * 60 * 1000; // 5 minutes
-        blackTimeMs = 5 * 60 * 1000;
+        whiteTimeMs = timeControl * 1000; // 5 minutes
+        blackTimeMs = timeControl * 1000;
         incrementMs = 0; // 0 seconds
         lastMoveTimestamp = System.currentTimeMillis();
         gameStarted = false;
@@ -46,12 +48,16 @@ public class ChessBlockEntity extends BlockEntity implements MenuProvider {
 
     @Override
     public @NotNull Component getDisplayName() {
-        return Component.literal("Chess");
+        return Component.translatable("game_night.games.chess.title");
     }
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, @NotNull Inventory inventory, @NotNull Player player) {
-        return new ChessMenu(i, this);
+        if (isSetup) {
+            return new ChessMenu(i, this);
+        } else {
+            return new ChessSetupMenu(i, this);
+        }
     }
 
     // Getters and setters
