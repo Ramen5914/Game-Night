@@ -1,0 +1,27 @@
+{
+    "blend": {
+        "func": "ADD",
+        "srcrgb": "ONE",
+        "dstrgb": "ZERO"
+    },
+    "vertex": "game_night:chess_outline",
+    "fragment": "game_night:chess_outline",
+    "attributes": [
+        "Position",
+        "Color"
+    ],
+    "uniforms": [
+        {
+            "name": "ModelViewMat",
+            "type": "matrix4x4",
+            "count": 16,
+            "values": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+        },
+        {
+            "name": "ProjMat",
+            "type": "matrix4x4",
+            "count": 16,
+            "values": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+        }
+    ]
+}
