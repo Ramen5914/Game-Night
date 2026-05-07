@@ -65,7 +65,11 @@ public class ChessBlockEntity extends BlockEntity implements MenuProvider {
         return fen;
     }
 
-    public boolean isSetup() {
+    public void setSetup(boolean isSetup) {
+        this.isSetup = isSetup;
+    }
+
+    public boolean getIsSetup() {
         return isSetup;
     }
 

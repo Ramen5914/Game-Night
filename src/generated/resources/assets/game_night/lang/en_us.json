@@ -1,6 +1,8 @@
 {
   "game_night.configuration.chess": "Chess",
   "game_night.configuration.go": "Go",
+  "game_night.games.chess.setup.mode": "Mode",
+  "game_night.games.chess.setup.start": "Start",
   "game_night.games.chess.title": "Chess",
   "itemGroup.game_night.gn_tab": "Game Night"
 }

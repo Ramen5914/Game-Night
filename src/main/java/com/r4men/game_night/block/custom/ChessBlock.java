@@ -54,11 +54,8 @@ public class ChessBlock extends BaseEntityBlock {
     protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof ChessBlockEntity chessBE) {
             if (!player.isCrouching() && !level.isClientSide()) {
-                if (chessBE.isSetup()) {
-                    player.openMenu(chessBE, pos);
-                } else {
-                    player.openMenu(chessBE, pos);
-                }
+                player.openMenu(chessBE, pos);
+
                 return ItemInteractionResult.SUCCESS;
             }
         }

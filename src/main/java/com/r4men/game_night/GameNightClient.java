@@ -4,6 +4,7 @@ import com.r4men.game_night.block.entity.GNBlockEntities;
 import com.r4men.game_night.block.entity.renderer.GNChessBlockEntityRenderer;
 import com.r4men.game_night.gui.GNMenuTypes;
 import com.r4men.game_night.gui.chess.screen.ChessScreen;
+import com.r4men.game_night.gui.chess.screen.ChessSetupScreen;
 
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
@@ -32,6 +33,7 @@ public class GameNightClient {
 
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(GNMenuTypes.CHESS_MENU.get(), ChessScreen::new);
+        event.register(GNMenuTypes.CHESS_SETUP_MENU.get(), ChessSetupScreen::new);
     }
 
     public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {

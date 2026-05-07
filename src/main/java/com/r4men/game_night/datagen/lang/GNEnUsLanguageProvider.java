@@ -28,5 +28,10 @@ public class GNEnUsLanguageProvider extends LanguageProvider {
 
         // Block Entities
         add("game_night.games.chess.title", "Chess");
+
+        // Game UIs
+        //// Chess
+        add("game_night.games.chess.setup.mode", "Mode");
+        add("game_night.games.chess.setup.start", "Start");
     }
 }
