@@ -1,1 +1,0 @@
-// chess outline shader removed
