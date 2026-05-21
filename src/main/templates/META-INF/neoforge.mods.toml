@@ -1,30 +1,23 @@
-modLoader="javafml"
-loaderVersion="${loader_version_range}" #mandatory
-
 license="${mod_license}"
-issueTrackerURL="${mod_issue_tracker}"
+issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/"
 
 [[mods]]
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
-updateJSONURL="${mod_update_json}"
-displayURL="${mod_display_url}"
-logoFile="${mod_logo}"
-credits='''${mod_credits}'''
-authors="${mod_authors}"
-description='''${mod_description}'''
-
-[[accessTransformers]]
-file="${access_transformer}"
-
-#[[mixins]]
-#config="${mixin}"
+updateJSONURL="https://change.me.example.invalid/updates.json"
+displayURL="https://change.me.to.your.mods.homepage.example.invalid/"
+logoFile="examplemod.png"
+credits=""
+authors=""
+description='''
+Example mod description.
+'''
 
 [[dependencies.${mod_id}]]
 modId="neoforge"
 type="required"
-versionRange="${neo_version_range}"
+versionRange="[${neo_version},)"
 ordering="NONE"
 side="BOTH"
 
