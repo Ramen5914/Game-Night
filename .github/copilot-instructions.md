@@ -2,10 +2,10 @@
 
 ## Project Overview
 
-NeoForge mod for Minecraft 1.21.1 that adds interactive board games (Chess, Monopoly) as placeable blocks with custom GUIs and a fully custom rendering pipeline for 3D chess pieces.
+NeoForge mod for Minecraft 1.21.4 that adds interactive board games (Chess, Monopoly) as placeable blocks with custom GUIs and a fully custom rendering pipeline for 3D chess pieces.
 
 - **Mod ID**: `game_night` | **Group**: `com.r4men.game_night`
-- **NeoForge**: 21.1.218 | **Java**: 21 | **Parchment mappings**: 2024.11.17
+- **NeoForge**: 26.1.2.43-beta | **Java**: 25 | **Minecraft**: 21.6.2
 
 ## Build Commands
 
