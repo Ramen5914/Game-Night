@@ -52,6 +52,10 @@ public class GameNight {
         LOGGER.info("{} initializing!", NAME);
     }
 
+    public static Identifier getIdentifier(String regName) {
+        return Identifier.fromNamespaceAndPath(ID, regName);
+    }
+
     @EventBusSubscriber(modid = GameNight.ID, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
