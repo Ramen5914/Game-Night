@@ -5,6 +5,7 @@ import com.r4men.game_night.block.GNBlocks;
 import com.r4men.game_night.block.entity.GNBlockEntities;
 import com.r4men.game_night.gui.GNMenuTypes;
 import com.r4men.game_night.item.GNItems;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -27,10 +28,10 @@ public class GameNight {
     public GameNight(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
 
-//        CMTabs.register(modEventBus);
+        GNTabs.register(modEventBus);
 
-        GNItems.register(modEventBus);
         GNBlocks.register(modEventBus);
+        GNItems.register(modEventBus);
 //        CMFluids.register(modEventBus);
 //        CMFluidTypes.register(modEventBus);
 //
