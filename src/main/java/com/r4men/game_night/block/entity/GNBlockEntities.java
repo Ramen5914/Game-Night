@@ -14,12 +14,12 @@ public class GNBlockEntities {
             DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, GameNight.ID);
 
     public static final Supplier<BlockEntityType<ChessBlockEntity>> CHESS_BE =
-            BLOCK_ENTITIES.register("chess_be", () -> BlockEntityType.Builder.of(
-                    ChessBlockEntity::new, GNBlocks.CHESS.get()).build(null));
+            BLOCK_ENTITIES.register("chess_be", () -> new BlockEntityType<>(
+                    ChessBlockEntity::new, GNBlocks.CHESS.get()));
 
     public static final Supplier<BlockEntityType<MonopolyBlockEntity>> MONOPOLY_BE =
-            BLOCK_ENTITIES.register("monopoly_be", () -> BlockEntityType.Builder.of(
-                    MonopolyBlockEntity::new, GNBlocks.MONOPOLY.get()).build(null));
+            BLOCK_ENTITIES.register("monopoly_be", () -> new BlockEntityType<>(
+                    MonopolyBlockEntity::new, GNBlocks.MONOPOLY.get()));
 
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
