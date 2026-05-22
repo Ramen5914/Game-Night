@@ -32,11 +32,7 @@ public class GameNight {
 
         GNBlocks.register(modEventBus);
         GNItems.register(modEventBus);
-//        CMFluids.register(modEventBus);
-//        CMFluidTypes.register(modEventBus);
-//
-//        CMDataComponentTypes.register(modEventBus);
-//
+
 //        CMRecipes.register(modEventBus);
 
         GNBlockEntities.register(modEventBus);
