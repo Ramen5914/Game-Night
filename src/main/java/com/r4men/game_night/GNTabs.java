@@ -1,5 +1,6 @@
 package com.r4men.game_night;
 
+import com.r4men.game_night.block.GNBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -18,9 +19,10 @@ public class GNTabs {
             "gn_tab",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.game_night.gn_tab"))
-                    .icon(() -> new ItemStack(Items.DIAMOND))
+                    .icon(() -> new ItemStack(GNBlocks.CHESS.get()))
                     .displayItems((params, output) -> {
-                        output.accept(Items.DIAMOND);
+                        output.accept(GNBlocks.CHESS.get());
+                        output.accept(GNBlocks.MONOPOLY.get());
                     })
                     .build()
     );
