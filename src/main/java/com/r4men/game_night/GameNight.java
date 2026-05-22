@@ -39,8 +39,6 @@ public class GameNight {
 
         GNMenuTypes.register(modEventBus);
 
-        GNTabs.register(modEventBus);
-
         modContainer.registerConfig(ModConfig.Type.SERVER, GNConfig.SERVER_SPEC);
     }
 
