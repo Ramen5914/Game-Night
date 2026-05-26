@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "game_night:chess/pieces/black/k"
+    "model": "game_night:chess/pieces/black_king"
   }
 }

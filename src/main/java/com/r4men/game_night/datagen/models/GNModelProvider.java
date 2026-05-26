@@ -31,7 +31,7 @@ public class GNModelProvider extends ModelProvider {
                 GameNight.getIdentifier("chess/black_bishop"),
                 new ClientItem(
                         new CuboidItemModelWrapper.Unbaked(
-                                GameNight.getIdentifier("chess/pieces/black/b"),
+                                GameNight.getIdentifier("chess/pieces/black_bishop"),
                                 Optional.empty(),
                                 List.of()
                         ),
@@ -42,7 +42,7 @@ public class GNModelProvider extends ModelProvider {
                 GameNight.getIdentifier("chess/black_king"),
                 new ClientItem(
                         new CuboidItemModelWrapper.Unbaked(
-                                GameNight.getIdentifier("chess/pieces/black/k"),
+                                GameNight.getIdentifier("chess/pieces/black_king"),
                                 Optional.empty(),
                                 List.of()
                         ),
@@ -53,7 +53,7 @@ public class GNModelProvider extends ModelProvider {
                 GameNight.getIdentifier("chess/black_knight"),
                 new ClientItem(
                         new CuboidItemModelWrapper.Unbaked(
-                                GameNight.getIdentifier("chess/pieces/black/n"),
+                                GameNight.getIdentifier("chess/pieces/black_knight"),
                                 Optional.empty(),
                                 List.of()
                         ),
@@ -64,7 +64,7 @@ public class GNModelProvider extends ModelProvider {
                 GameNight.getIdentifier("chess/black_pawn"),
                 new ClientItem(
                         new CuboidItemModelWrapper.Unbaked(
-                                GameNight.getIdentifier("chess/pieces/black/p"),
+                                GameNight.getIdentifier("chess/pieces/black_pawn"),
                                 Optional.empty(),
                                 List.of()
                         ),
@@ -75,7 +75,7 @@ public class GNModelProvider extends ModelProvider {
                 GameNight.getIdentifier("chess/black_queen"),
                 new ClientItem(
                         new CuboidItemModelWrapper.Unbaked(
-                                GameNight.getIdentifier("chess/pieces/black/q"),
+                                GameNight.getIdentifier("chess/pieces/black_queen"),
                                 Optional.empty(),
                                 List.of()
                         ),
@@ -86,7 +86,7 @@ public class GNModelProvider extends ModelProvider {
                 GameNight.getIdentifier("chess/black_rook"),
                 new ClientItem(
                         new CuboidItemModelWrapper.Unbaked(
-                                GameNight.getIdentifier("chess/pieces/black/r"),
+                                GameNight.getIdentifier("chess/pieces/black_rook"),
                                 Optional.empty(),
                                 List.of()
                         ),
@@ -99,7 +99,7 @@ public class GNModelProvider extends ModelProvider {
                 GameNight.getIdentifier("chess/white_bishop"),
                 new ClientItem(
                         new CuboidItemModelWrapper.Unbaked(
-                                GameNight.getIdentifier("chess/pieces/white/b"),
+                                GameNight.getIdentifier("chess/pieces/white_bishop"),
                                 Optional.empty(),
                                 List.of()
                         ),
@@ -110,7 +110,7 @@ public class GNModelProvider extends ModelProvider {
                 GameNight.getIdentifier("chess/white_king"),
                 new ClientItem(
                         new CuboidItemModelWrapper.Unbaked(
-                                GameNight.getIdentifier("chess/pieces/white/k"),
+                                GameNight.getIdentifier("chess/pieces/white_king"),
                                 Optional.empty(),
                                 List.of()
                         ),
@@ -121,7 +121,7 @@ public class GNModelProvider extends ModelProvider {
                 GameNight.getIdentifier("chess/white_knight"),
                 new ClientItem(
                         new CuboidItemModelWrapper.Unbaked(
-                                GameNight.getIdentifier("chess/pieces/white/n"),
+                                GameNight.getIdentifier("chess/pieces/white_knight"),
                                 Optional.empty(),
                                 List.of()
                         ),
@@ -132,7 +132,7 @@ public class GNModelProvider extends ModelProvider {
                 GameNight.getIdentifier("chess/white_pawn"),
                 new ClientItem(
                         new CuboidItemModelWrapper.Unbaked(
-                                GameNight.getIdentifier("chess/pieces/white/p"),
+                                GameNight.getIdentifier("chess/pieces/white_pawn"),
                                 Optional.empty(),
                                 List.of()
                         ),
@@ -143,7 +143,7 @@ public class GNModelProvider extends ModelProvider {
                 GameNight.getIdentifier("chess/white_queen"),
                 new ClientItem(
                         new CuboidItemModelWrapper.Unbaked(
-                                GameNight.getIdentifier("chess/pieces/white/q"),
+                                GameNight.getIdentifier("chess/pieces/white_queen"),
                                 Optional.empty(),
                                 List.of()
                         ),
@@ -154,7 +154,7 @@ public class GNModelProvider extends ModelProvider {
                 GameNight.getIdentifier("chess/white_rook"),
                 new ClientItem(
                         new CuboidItemModelWrapper.Unbaked(
-                                GameNight.getIdentifier("chess/pieces/white/r"),
+                                GameNight.getIdentifier("chess/pieces/white_rook"),
                                 Optional.empty(),
                                 List.of()
                         ),

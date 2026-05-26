@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "game_night:chess/pieces/black/p"
+    "model": "game_night:chess/pieces/black_pawn"
   }
 }
