@@ -1,6 +1,7 @@
 package com.r4men.game_night.datagen.lang;
 
 import com.r4men.game_night.GameNight;
+import com.r4men.game_night.block.GNBlocks;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import org.jetbrains.annotations.NotNull;
@@ -33,5 +34,9 @@ public class GNEnUsLanguageProvider extends LanguageProvider {
         //// Chess
         add("game_night.games.chess.setup.mode", "Mode");
         add("game_night.games.chess.setup.start", "Start");
+
+        // Blocks
+        add(GNBlocks.CHESS.get(), "Chess");
+        add(GNBlocks.MONOPOLY.get(), "Monopoly");
     }
 }
