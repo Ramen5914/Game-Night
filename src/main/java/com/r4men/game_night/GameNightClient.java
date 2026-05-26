@@ -1,15 +1,15 @@
 package com.r4men.game_night;
 
 import com.r4men.game_night.block.entity.GNBlockEntities;
-import com.r4men.game_night.block.entity.renderer.GNChessBlockEntityRenderer;
+import com.r4men.game_night.client.renderer.ChessBlockEntityRenderer;
+import com.r4men.game_night.client.models.chess.ChessPieces;
 import com.r4men.game_night.gui.GNMenuTypes;
 import com.r4men.game_night.gui.chess.screen.ChessScreen;
 import com.r4men.game_night.gui.chess.screen.ChessSetupScreen;
 
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
@@ -18,6 +18,7 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.client.model.standalone.SimpleUnbakedStandaloneModel;
 
 @Mod(value = GameNight.ID, dist = Dist.CLIENT)
 public class GameNightClient {
@@ -28,7 +29,6 @@ public class GameNightClient {
         // Register mod bus events
         modEventBus.addListener(GameNightClient::registerScreens);
         modEventBus.addListener(GameNightClient::registerBER);
-        modEventBus.addListener(GameNightClient::registerAdditionalModels);
     }
 
     public static void registerScreens(RegisterMenuScreensEvent event) {
@@ -37,17 +37,7 @@ public class GameNightClient {
     }
 
     public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(GNBlockEntities.CHESS_BE.get(), GNChessBlockEntityRenderer::new);
-    }
-
-    public static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
-        String[] pieces = {"b", "k", "n", "p", "q", "r"};
-        String[] colors = {"black", "white"};
-
-        for (String color : colors) {
-            for (String piece : pieces) {
-                event.register(new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(GameNight.ID, "chess/pieces/" + color + "/" + piece), "standalone"));
-            }
-        }
+        event.registerBlockEntityRenderer(GNBlockEntities.CHESS_BE.get(), ChessBlockEntityRenderer::create);
+//        event.registerBlockEntityRenderer(GNBlockEntities.MONOPOLY_BE.get(), MonopolyBlockEntityRenderer::new);
     }
 }
