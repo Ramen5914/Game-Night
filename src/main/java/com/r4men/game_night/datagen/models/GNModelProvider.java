@@ -165,7 +165,7 @@ public class GNModelProvider extends ModelProvider {
 
     public static final ModelTemplate SQUARE_BOARD_TEMPLATE = new ModelTemplate(
             Optional.of(
-                    ModelLocationUtils.decorateBlockModelLocation("game_night:square_board")
+                    GameNight.getIdentifier("block/square_board")
             ),
             Optional.empty(),
             BOARD
