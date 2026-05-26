@@ -2,7 +2,6 @@ package com.r4men.game_night.gui;
 
 import com.r4men.game_night.GameNight;
 import com.r4men.game_night.gui.chess.menu.ChessMenu;
-import com.r4men.game_night.gui.chess.menu.ChessSetupMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -18,9 +17,6 @@ public class GNMenuTypes {
 
     public static final DeferredHolder<MenuType<?>, MenuType<ChessMenu>> CHESS_MENU =
             registerMenuType("chess_menu", ChessMenu::new);
-
-    public static final DeferredHolder<MenuType<?>, MenuType<ChessSetupMenu>> CHESS_SETUP_MENU =
-            registerMenuType("chess_setup_menu", ChessSetupMenu::new);
 
     private static <T extends AbstractContainerMenu> DeferredHolder<MenuType<?>, MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
         return MENUS.register(name, () -> IMenuTypeExtension.create(factory));

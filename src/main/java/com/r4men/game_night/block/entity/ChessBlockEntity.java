@@ -1,7 +1,6 @@
 package com.r4men.game_night.block.entity;
 
 import com.r4men.game_night.gui.chess.menu.ChessMenu;
-import com.r4men.game_night.gui.chess.menu.ChessSetupMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -17,7 +16,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,11 +54,7 @@ public class ChessBlockEntity extends BlockEntity implements MenuProvider {
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, @NotNull Inventory inventory, @NotNull Player player) {
-        if (isSetup) {
-            return new ChessMenu(i, this);
-        } else {
-            return new ChessSetupMenu(i, this);
-        }
+        return new ChessMenu(i, this);
     }
 
     // Getters and setters
