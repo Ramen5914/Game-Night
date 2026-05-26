@@ -42,6 +42,13 @@ public record ChessBlockEntityRenderer(
         Supplier<ItemStack> whiteQueen,
         Supplier<ItemStack> whiteRook
 ) implements BlockEntityRenderer<ChessBlockEntity, ChessRenderState> {
+    private static final float boardSize = 14f;
+    private static final float boardThickness = 1f;
+    private static final float squareCount = 8f;
+
+    private static final float cornerOffset = ((16f - boardSize) / 2f)/16f;
+    private static final float squareSize = boardSize/16f/squareCount;
+
     public static class ChessRenderState extends BlockEntityRenderState {
         public final ItemStackRenderState blackBishopItemState = new ItemStackRenderState();
         public final ItemStackRenderState blackKingItemState = new ItemStackRenderState();
@@ -126,14 +133,19 @@ public record ChessBlockEntityRenderer(
     public void submit(@NonNull ChessRenderState state, @NonNull PoseStack poseStack, @NonNull SubmitNodeCollector collector, @NonNull CameraRenderState cameraRenderState) {
         poseStack.pushPose();
 
-        String[] boardState = state.fen.split(" ")[0].split("/");
+        String boardUnfixed =  state.fen.split(" ")[0];
+        StringBuilder boardFixed = new StringBuilder();
 
-        float boardSize = 14f;
-        float boardThickness = 1f;
-        float squareCount = 8f;
+        for (char c : boardUnfixed.toCharArray()) {
+            if (Character.isDigit(c)) {
+                int i = Character.getNumericValue(c);
+                boardFixed.repeat(" ", i);
+            } else {
+                boardFixed.append(c);
+            }
+        }
 
-        float cornerOffset = ((16f - boardSize) / 2f)/16f;
-        float squareSize = boardSize/16f/squareCount;
+        String[] boardState = boardFixed.toString().split("/");
 
         // Center of the a8 square (The -1f/128f value in the y section makes the pieces sit perfectly flush with the surface of the board)
         Vec3 a8 = new Vec3(cornerOffset + squareSize/2f + 7 * squareSize, 1f/16f + boardThickness/16f - 1f/128f, cornerOffset + squareSize/2f + 7 * squareSize);
@@ -143,63 +155,56 @@ public record ChessBlockEntityRenderer(
 
         Direction facing = state.boardFacing;
         switch (facing) {
-            case EAST: {
-                poseStack.rotateAround(new Quaternionf().rotateY((float) Math.toRadians(90d)), 3.5f, 0, 3.5f);
-            }
-            case SOUTH: {
-                poseStack.rotateAround(new Quaternionf().rotateY((float) Math.toRadians(90d)), 3.5f, 0, 3.5f);
-            }
-            case WEST: {
-                poseStack.rotateAround(new Quaternionf().rotateY((float) Math.toRadians(90d)), 3.5f, 0, 3.5f);
-            }
+            case EAST: poseStack.rotateAround(new Quaternionf().rotateY((float) Math.toRadians(-90d)), 3.5f, 0, 3.5f); break;
+            case SOUTH: poseStack.rotateAround(new Quaternionf().rotateY((float) Math.toRadians(-180d)), 3.5f, 0, 3.5f); break;
+            case WEST: poseStack.rotateAround(new Quaternionf().rotateY((float) Math.toRadians(-270d)), 3.5f, 0, 3.5f); break;
             default: break;
         }
 
         for (int i = 0; i < 8; i++) {
             String row = boardState[i];
             for (int j = 0; j < 8; j++) {
-                if (Character.isDigit(row.charAt(j))) {
-                    j = j + (row.charAt(j) - '0') - 1; // Skip empty squares
-                } else {
-                    char piece = row.charAt(j);
-                    poseStack.pushPose();
-                    poseStack.translate(j, 0, i);
+                char piece = row.charAt(j);
+                poseStack.pushPose();
+                poseStack.translate(j, 0, i);
 
-                    if (Character.isLowerCase(piece)) {
-                        poseStack.mulPose(new Matrix4f().rotateY((float) Math.toRadians(180d)));
-                    }
-
-                    if (piece == 'p') {
-                        state.blackPawnItemState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-                    } else if (piece == 'q') {
-                        state.blackQueenItemState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-                    } else if (piece == 'r') {
-                        state.blackRookItemState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-                    } else if (piece == 'b') {
-                        state.blackBishopItemState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-                    } else if (piece == 'n') {
-                        state.blackKnightItemState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-                    } else if (piece == 'k') {
-                        state.blackKingItemState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-                    } else if (piece == 'P') {
-                        state.whitePawnItemState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-                    } else if (piece == 'Q') {
-                        state.whiteQueenItemState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-                    } else if (piece == 'R') {
-                        state.whiteRookItemState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-                    } else if (piece == 'B') {
-                        state.whiteBishopItemState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-                    } else if (piece == 'N') {
-                        state.whiteKnightItemState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-                    } else if (piece == 'K') {
-                        state.whiteKingItemState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-                    }
-
-                    poseStack.popPose();
+                if (Character.isLowerCase(piece)) {
+                    poseStack.mulPose(new Matrix4f().rotateY((float) Math.toRadians(180d)));
                 }
+
+                renderPiece(poseStack, collector, state, piece);
+
+                poseStack.popPose();
             }
         }
 
         poseStack.popPose();
+    }
+
+    private void renderPiece(@NonNull PoseStack poseStack, @NonNull SubmitNodeCollector collector, @NonNull ChessRenderState state, char piece) {
+        ItemStackRenderState itemState = null;
+        switch (piece) {
+            case 'p': itemState = state.blackPawnItemState; break;
+            case 'q': itemState = state.blackQueenItemState; break;
+            case 'r': itemState = state.blackRookItemState; break;
+            case 'b': itemState = state.blackBishopItemState; break;
+            case 'n': itemState = state.blackKnightItemState; break;
+            case 'k': itemState = state.blackKingItemState; break;
+            case 'P': itemState = state.whitePawnItemState; break;
+            case 'Q': itemState = state.whiteQueenItemState; break;
+            case 'R': itemState = state.whiteRookItemState; break;
+            case 'B': itemState = state.whiteBishopItemState; break;
+            case 'N': itemState = state.whiteKnightItemState; break;
+            case 'K': itemState = state.whiteKingItemState; break;
+            default: break;
+        }
+
+        if (itemState != null) {
+            submitItemState(poseStack, collector, state, itemState);
+        }
+    }
+
+    private void submitItemState(@NonNull PoseStack poseStack, @NonNull SubmitNodeCollector collector, @NonNull ChessRenderState state, ItemStackRenderState itemStack) {
+        itemStack.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
     }
 }
