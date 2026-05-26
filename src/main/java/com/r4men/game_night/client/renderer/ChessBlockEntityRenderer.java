@@ -200,11 +200,7 @@ public record ChessBlockEntityRenderer(
         }
 
         if (itemState != null) {
-            submitItemState(poseStack, collector, state, itemState);
+            itemState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
         }
-    }
-
-    private void submitItemState(@NonNull PoseStack poseStack, @NonNull SubmitNodeCollector collector, @NonNull ChessRenderState state, ItemStackRenderState itemStack) {
-        itemStack.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
     }
 }
