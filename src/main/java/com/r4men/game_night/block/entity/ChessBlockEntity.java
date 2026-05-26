@@ -148,54 +148,6 @@ public class ChessBlockEntity extends BlockEntity implements MenuProvider {
         setChanged();
     }
 
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        tag.putString("fen", fen);
-        tag.putLong("whiteTimeMs", whiteTimeMs);
-        tag.putLong("blackTimeMs", blackTimeMs);
-        tag.putLong("lastMoveTimestamp", lastMoveTimestamp);
-        tag.putLong("incrementMs", incrementMs);
-        tag.putBoolean("gameStarted", gameStarted);
-        tag.putBoolean("gameOver", gameOver);
-        tag.putString("winner", String.valueOf(winner));
-        tag.putString("gameOverReason", gameOverReason);
-
-        super.saveAdditional(tag, registries);
-    }
-
-    @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-
-        if (tag.contains("fen")) {
-            fen = tag.getString("fen");
-        }
-        if (tag.contains("whiteTimeMs")) {
-            whiteTimeMs = tag.getLong("whiteTimeMs");
-        }
-        if (tag.contains("blackTimeMs")) {
-            blackTimeMs = tag.getLong("blackTimeMs");
-        }
-        if (tag.contains("lastMoveTimestamp")) {
-            lastMoveTimestamp = tag.getLong("lastMoveTimestamp");
-        }
-        if (tag.contains("incrementMs")) {
-            incrementMs = tag.getLong("incrementMs");
-        }
-        if (tag.contains("gameStarted")) {
-            gameStarted = tag.getBoolean("gameStarted");
-        }
-        if (tag.contains("gameOver")) {
-            gameOver = tag.getBoolean("gameOver");
-        }
-        if (tag.contains("winner")) {
-            String winnerStr = tag.getString("winner");
-            winner = winnerStr.isEmpty() ? 0 : winnerStr.charAt(0);
-        }
-        if (tag.contains("gameOverReason")) {
-            gameOverReason = tag.getString("gameOverReason");
-        }
-    }
 
     @Override
     public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
