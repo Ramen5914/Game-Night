@@ -49,19 +49,4 @@ public class GameNight {
     public static Identifier getIdentifier(String regName) {
         return Identifier.fromNamespaceAndPath(ID, regName);
     }
-
-    @EventBusSubscriber(modid = GameNight.ID, value = Dist.CLIENT)
-    public static class ClientModEvents {
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
-//            CMItemProperties.addCustomItemProperties();
-        }
-
-        @SubscribeEvent
-        public static void onClientExtensions(RegisterClientExtensionsEvent event) {
-//            for (var fluid : CMFluidTypes.FLUID_TYPES.getEntries().stream().map(Holder::value).toList()) {
-//                event.registerFluidType(((BaseFluidType) fluid).getClientFluidTypeExtensions(), fluid);
-//            }
-        }
-    }
 }
