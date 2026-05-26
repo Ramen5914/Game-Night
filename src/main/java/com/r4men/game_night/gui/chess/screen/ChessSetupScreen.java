@@ -2,37 +2,28 @@ package com.r4men.game_night.gui.chess.screen;
 
 import com.r4men.game_night.gui.chess.menu.ChessSetupMenu;
 import com.r4men.game_night.gui.chess.menu.ChessMenu;
-import com.r4men.game_night.gui.chess.screen.ChessScreen;
-// Font not needed here
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
-import org.jetbrains.annotations.NotNull;
 
 public class ChessSetupScreen extends AbstractContainerScreen<ChessSetupMenu> {
     private Button startButton;
-
     private int x;
     private int y;
 
     public ChessSetupScreen(ChessSetupMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-
-        this.imageWidth = 8 * 24;
-        this.imageHeight = 8 * 24;
-
-        this.titleLabelY = -10000;
-        this.inventoryLabelY = -10000;
+        this.titleLabelX = -10000;
+        this.inventoryLabelX = -10000;
     }
 
     @Override
     protected void init() {
         super.init();
-
-        x = (width - imageWidth) / 2;
-        y = (height - imageHeight) / 2;
+        x = this.leftPos;
+        y = this.topPos;
 
         this.startButton = this.addRenderableWidget(
                 Button.builder(Component.translatable("game_night.games.chess.setup.start"), button -> {
@@ -41,22 +32,10 @@ public class ChessSetupScreen extends AbstractContainerScreen<ChessSetupMenu> {
         );
     }
 
-    @Override
-    protected void renderBg(@NotNull GuiGraphics guiGraphics, float v, int i, int i1) {
+    protected void renderBg(GuiGraphicsExtractor guiGraphics, float v, int i, int i1) {
         guiGraphics.fill(x, y, x+250, y+250, 0xFFFFFFFF);
     }
 
-    @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-
-        guiGraphics.drawString(font, Component.translatable("game_night.games.chess.setup.mode"), x, y, 0x000000FF);
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
 
     private void onStartButtonPressed() {
         // Mark the block entity as setup so the block will open the normal chess menu

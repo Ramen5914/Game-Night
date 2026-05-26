@@ -66,32 +66,19 @@ public class ChessMenu extends AbstractContainerMenu {
         return null;
     }
 
-    public ChessMenu(int pContainerId, ChessBlockEntity blockEntity) {
+    public ChessMenu(int pContainerId, @NotNull ChessBlockEntity blockEntity) {
         super(GNMenuTypes.CHESS_MENU.get(), pContainerId);
         this.blockEntity = blockEntity;
 
-        if (blockEntity != null) {
-            // Load data from block entity
-            initBoardFromFen(blockEntity.getFen());
-            this.whiteTimeMs = blockEntity.getWhiteTimeMs();
-            this.blackTimeMs = blockEntity.getBlackTimeMs();
-            this.lastMoveTimestamp = blockEntity.getLastMoveTimestamp();
-            this.incrementMs = blockEntity.getIncrementMs();
-            this.gameStarted = blockEntity.isGameStarted();
-            this.gameOver = blockEntity.isGameOver();
-            this.winner = blockEntity.getWinner();
-            this.gameOverReason = blockEntity.getGameOverReason();
-        } else {
-            // Initialize board from starting FEN (for command-based opening)
-            initBoardFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-
-            // Initialize time control: 5 minutes each, 0 second increment
-            long initialTimeMs = 5 * 60 * 1000; // 5 minutes
-            this.incrementMs = 0; // 0 seconds
-            this.whiteTimeMs = initialTimeMs;
-            this.blackTimeMs = initialTimeMs;
-            this.lastMoveTimestamp = System.currentTimeMillis();
-        }
+        initBoardFromFen(blockEntity.getFen());
+        this.whiteTimeMs = blockEntity.getWhiteTimeMs();
+        this.blackTimeMs = blockEntity.getBlackTimeMs();
+        this.lastMoveTimestamp = blockEntity.getLastMoveTimestamp();
+        this.incrementMs = blockEntity.getIncrementMs();
+        this.gameStarted = blockEntity.isGameStarted();
+        this.gameOver = blockEntity.isGameOver();
+        this.winner = blockEntity.getWinner();
+        this.gameOverReason = blockEntity.getGameOverReason();
     }
 
     private void initBoardFromFen(String fen) {
@@ -134,7 +121,7 @@ public class ChessMenu extends AbstractContainerMenu {
         if (parts.length > 3 && !parts[3].equals("-")) {
             String enPassant = parts[3];
             int col = enPassant.charAt(0) - 'a'; // Convert 'a'-'h' to 0-7
-            int row = 8 - (enPassant.charAt(1) - '0'); // Convert '1'-'8' to 7-0 (row 0 is top)
+            int row = 8 - (Character.getNumericValue(enPassant.charAt(1))); // Convert '1'-'8' to 7-0 (row 0 is top)
             enPassantSquare = new int[]{row, col};
         }
 
@@ -835,14 +822,10 @@ public class ChessMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(@NotNull Player player) {
-        if (blockEntity != null) {
-            // Check if player is still within 8 blocks of the chess block
-            return player.distanceToSqr(
-                blockEntity.getBlockPos().getX() + 0.5,
-                blockEntity.getBlockPos().getY() + 0.5,
-                blockEntity.getBlockPos().getZ() + 0.5
-            ) <= 64.0;
-        }
-        return true; // For command-based opening
+        return player.distanceToSqr(
+            blockEntity.getBlockPos().getX() + 0.5,
+            blockEntity.getBlockPos().getY() + 0.5,
+            blockEntity.getBlockPos().getZ() + 0.5
+        ) <= 64.0;
     }
 }
