@@ -1,1 +1,0 @@
-// Chess outline job removed.
