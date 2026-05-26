@@ -3,6 +3,7 @@ package com.r4men.game_night.block.entity;
 import com.r4men.game_night.gui.chess.menu.ChessMenu;
 import com.r4men.game_night.gui.chess.menu.ChessSetupMenu;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -15,6 +16,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -202,5 +205,9 @@ public class ChessBlockEntity extends BlockEntity implements MenuProvider {
     @Override
     public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    public Direction getFacing() {
+        return this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
     }
 }
