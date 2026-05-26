@@ -6,9 +6,12 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.model.*;
+import net.minecraft.client.renderer.item.ClientItem;
+import net.minecraft.client.renderer.item.CuboidItemModelWrapper;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 
+import java.util.List;
 import java.util.Optional;
 
 public class GNModelProvider extends ModelProvider {
@@ -18,7 +21,7 @@ public class GNModelProvider extends ModelProvider {
 
     @Override
     protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        blockModels.createTrivialBlock(GNBlocks.CHESS.get(), SQUARE_BOARD_PROVIDER);
+        blockModels.createHorizontallyRotatedBlock(GNBlocks.CHESS.get(), SQUARE_BOARD_PROVIDER);
         blockModels.createTrivialBlock(GNBlocks.MONOPOLY.get(), SQUARE_BOARD_PROVIDER);
     }
 
