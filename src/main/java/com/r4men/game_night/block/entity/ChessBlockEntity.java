@@ -21,31 +21,22 @@ import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
 public class ChessBlockEntity extends BlockEntity implements MenuProvider {
-    private String fen;
-    private boolean isSetup;
-    private long timeControl; // Seconds
-    private long whiteTimeMs;
-    private long blackTimeMs;
-    private long lastMoveTimestamp;
-    private long incrementMs;
-    private boolean gameStarted;
-    private boolean gameOver;
-    private char winner;
-    private String gameOverReason;
+    private String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    private boolean isSetup = false;
+    private long timeControlSeconds = 0;
+    private long incrementSeconds = 0;
+    private long whiteTimeMs = 0;
+    private long blackTimeMs = 0;
+    private long lastMoveTimestamp = System.currentTimeMillis();
+    private boolean gameStarted = false;
+    private boolean gameOver = false;
+    private char winner = 0; // 'w' for white, 'b' for black, 'd' for draw, 0 for ongoing
+    private Player whitePlayer = null;
+    private Player blackPlayer = null;
+    private String gameOverReason = "";
 
-    public ChessBlockEntity(BlockPos pos, BlockState blockState) {
-        super(GNBlockEntities.CHESS_BE.get(), pos, blockState);
-
-        fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        isSetup = false;
-        whiteTimeMs = timeControl * 1000; // 5 minutes
-        blackTimeMs = timeControl * 1000;
-        incrementMs = 0; // 0 seconds
-        lastMoveTimestamp = System.currentTimeMillis();
-        gameStarted = false;
-        gameOver = false;
-        winner = 0;
-        gameOverReason = "";
+    public ChessBlockEntity(BlockPos pos, BlockState state) {
+        super(GNBlockEntities.CHESS_BE.get(), pos, state);
     }
 
     @Override
