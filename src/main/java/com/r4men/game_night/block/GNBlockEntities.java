@@ -1,7 +1,8 @@
-package com.r4men.game_night.block.entity;
+package com.r4men.game_night.block;
 
 import com.r4men.game_night.GameNight;
-import com.r4men.game_night.block.GNBlocks;
+import com.r4men.game_night.block.entity.ChessBlockEntity;
+import com.r4men.game_night.block.entity.MonopolyBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
