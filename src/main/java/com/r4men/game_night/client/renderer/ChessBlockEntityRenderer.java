@@ -125,7 +125,7 @@ public record ChessBlockEntityRenderer(
         resolver.updateForTopItem(state.whiteQueenItemState, this.whiteQueen.get(), ItemDisplayContext.NONE, level, null, renderSeed);
         resolver.updateForTopItem(state.whiteRookItemState, this.whiteRook.get(), ItemDisplayContext.NONE, level, null, renderSeed);
 
-        state.fen = be.getFen();
+        state.fen = be.getSimplifiedFen();
         state.boardFacing = be.getFacing();
     }
 
@@ -133,19 +133,7 @@ public record ChessBlockEntityRenderer(
     public void submit(@NonNull ChessRenderState state, @NonNull PoseStack poseStack, @NonNull SubmitNodeCollector collector, @NonNull CameraRenderState cameraRenderState) {
         poseStack.pushPose();
 
-        String boardUnfixed =  state.fen.split(" ")[0];
-        StringBuilder boardFixed = new StringBuilder();
-
-        for (char c : boardUnfixed.toCharArray()) {
-            if (Character.isDigit(c)) {
-                int i = Character.getNumericValue(c);
-                boardFixed.repeat(" ", i);
-            } else {
-                boardFixed.append(c);
-            }
-        }
-
-        String[] boardState = boardFixed.toString().split("/");
+        String[] boardState = state.fen.split("/");
 
         // Center of the a8 square (The -1f/128f value in the y section makes the pieces sit perfectly flush with the surface of the board)
         Vec3 a8 = new Vec3(cornerOffset + squareSize/2f + 7 * squareSize, 1f/16f + boardThickness/16f - 1f/128f, cornerOffset + squareSize/2f + 7 * squareSize);
