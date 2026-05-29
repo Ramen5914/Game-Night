@@ -79,6 +79,21 @@ public class ChessBlockEntity extends BlockEntity implements MenuProvider {
         return fen;
     }
 
+    public String getSimplifiedFen() {
+        String pieceLayout =  fen.split(" ")[0];
+        StringBuilder simpleFen = new StringBuilder();
+
+        for (char c : pieceLayout.toCharArray()) {
+            if (Character.isDigit(c)) {
+                int i = Character.getNumericValue(c);
+                simpleFen.repeat(" ", i);
+            } else {
+                simpleFen.append(c);
+            }
+        }
+
+        return simpleFen.toString();
+    }
 
     public void setFen(String fen) {
         this.fen = fen;
