@@ -1,14 +1,12 @@
 package com.r4men.game_night.block.entity;
 
-import com.r4men.game_night.gui.chess.menu.ChessMenu;
+import com.r4men.game_night.block.GNBlockEntities;
+import com.r4men.game_night.gui.menu.ChessMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -16,8 +14,11 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 public class ChessBlockEntity extends BlockEntity implements MenuProvider {
     private String fen;
@@ -57,21 +58,40 @@ public class ChessBlockEntity extends BlockEntity implements MenuProvider {
         return new ChessMenu(i, this);
     }
 
-    // Getters and setters
     public String getFen() {
         return fen;
     }
 
-    public void setSetup(boolean isSetup) {
-        this.isSetup = isSetup;
+
+    public void setFen(String fen) {
+        this.fen = fen;
+        setChanged();
     }
 
     public boolean getIsSetup() {
         return isSetup;
     }
 
-    public void setFen(String fen) {
-        this.fen = fen;
+    public void setIsSetup(boolean isSetup) {
+        this.isSetup = isSetup;
+        setChanged();
+    }
+
+    public long getTimeControlSeconds() {
+        return timeControlSeconds;
+    }
+
+    public void setTimeControlSeconds(long timeControlSeconds) {
+        this.timeControlSeconds = timeControlSeconds;
+        setChanged();
+    }
+
+    public long getIncrementSeconds() {
+        return incrementSeconds;
+    }
+
+    public void setIncrementSeconds(long incrementSeconds) {
+        this.incrementSeconds = incrementSeconds;
         setChanged();
     }
 
@@ -100,10 +120,6 @@ public class ChessBlockEntity extends BlockEntity implements MenuProvider {
     public void setLastMoveTimestamp(long lastMoveTimestamp) {
         this.lastMoveTimestamp = lastMoveTimestamp;
         setChanged();
-    }
-
-    public long getIncrementMs() {
-        return incrementMs;
     }
 
     public boolean isGameStarted() {
@@ -142,18 +158,21 @@ public class ChessBlockEntity extends BlockEntity implements MenuProvider {
         setChanged();
     }
 
-
-    @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        return saveWithoutMetadata(registries);
+    public Player getWhitePlayer() {
+        return whitePlayer;
     }
 
-    @Override
-    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
+    public void setWhitePlayer(Player whitePlayer) {
+        this.whitePlayer = whitePlayer;
+        setChanged();
     }
 
-    public Direction getFacing() {
-        return this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
+    public Player getBlackPlayer() {
+        return blackPlayer;
+    }
+
+    public void setBlackPlayer(Player blackPlayer) {
+        this.blackPlayer = blackPlayer;
+        setChanged();
     }
 }
