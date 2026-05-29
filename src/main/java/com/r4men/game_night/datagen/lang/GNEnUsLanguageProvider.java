@@ -19,19 +19,24 @@ public class GNEnUsLanguageProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
         // Creative Mode Tabs
-        add("itemGroup.game_night.gn_tab", GameNight.NAME);
+        add("itemGroup.game_night.gn_tab", "Game Night");
 
         // Config
-        //// Chess
+        // #Server
+        add("game_night.configuration.enable_elo_system", "Enable Elo System");
+        // #Client
+        // ##Chess
         add("game_night.configuration.chess", "Chess");
-        //// Go
+        add("game_night.configuration.chess.show_coordinates", "Show Coordinates");
+
+        // ##Go
         add("game_night.configuration.go", "Go");
 
         // Block Entities
         add("game_night.games.chess.title", "Chess");
 
         // Game UIs
-        //// Chess
+        // #Chess
         add("game_night.games.chess.setup.mode", "Mode");
         add("game_night.games.chess.setup.start", "Start");
 
