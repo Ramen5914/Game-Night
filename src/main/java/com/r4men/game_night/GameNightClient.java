@@ -1,10 +1,10 @@
 package com.r4men.game_night;
 
-import com.r4men.game_night.block.entity.GNBlockEntities;
+import com.r4men.game_night.block.GNBlockEntities;
 import com.r4men.game_night.client.renderer.ChessBlockEntityRenderer;
 import com.r4men.game_night.gui.GNMenuTypes;
-import com.r4men.game_night.gui.chess.screen.ChessScreen;
 
+import com.r4men.game_night.gui.screen.ChessScreen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -32,6 +32,5 @@ public class GameNightClient {
 
     public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(GNBlockEntities.CHESS_BE.get(), ChessBlockEntityRenderer::create);
-//        event.registerBlockEntityRenderer(GNBlockEntities.MONOPOLY_BE.get(), MonopolyBlockEntityRenderer::new);
     }
 }
