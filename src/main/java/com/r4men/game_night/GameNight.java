@@ -2,7 +2,7 @@ package com.r4men.game_night;
 
 import com.mojang.logging.LogUtils;
 import com.r4men.game_night.block.GNBlocks;
-import com.r4men.game_night.block.entity.GNBlockEntities;
+import com.r4men.game_night.block.GNBlockEntities;
 import com.r4men.game_night.gui.GNMenuTypes;
 import com.r4men.game_night.item.GNItems;
 import net.minecraft.resources.Identifier;
@@ -27,8 +27,6 @@ public class GameNight {
 
         GNBlocks.register(modEventBus);
         GNItems.register(modEventBus);
-
-//        CMRecipes.register(modEventBus);
 
         GNBlockEntities.register(modEventBus);
 
