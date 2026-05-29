@@ -46,7 +46,33 @@ public class ChessBlockEntity extends BlockEntity implements MenuProvider {
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, @NotNull Inventory inventory, @NotNull Player player) {
-        return new ChessMenu(i, this);
+        return new ChessMenu(i, inventory, player.level().getBlockEntity(this.worldPosition));
+    }
+
+    @Override
+    protected void loadAdditional(@NonNull ValueInput input) {
+        super.loadAdditional(input);
+        this.fen = input.getStringOr("fen", "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    }
+
+    @Override
+    protected void saveAdditional(@NonNull ValueOutput output) {
+        super.saveAdditional(output);
+        output.putString("fen", this.fen);
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
+        return this.saveWithoutMetadata(registries);
+    }
+
+    @Override
+    public void handleUpdateTag(@NonNull ValueInput input) {
+        super.handleUpdateTag(input);
+    }
+
+    public Direction getFacing() {
+        return this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
     }
 
     public String getFen() {
