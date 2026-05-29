@@ -1,74 +1,40 @@
 package com.r4men.game_night;
 
+import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.common.ModConfigSpec;
+
+import java.awt.*;
 
 public class GNConfig {
     // Server
     private static final ModConfigSpec.Builder SERVER_BUILDER = new ModConfigSpec.Builder();
     public static final ModConfigSpec SERVER_SPEC;
 
+    public static final ModConfigSpec.ConfigValue<Boolean> ENABLE_ELO_SYSTEM;
+
     // Client
     private static final ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
     public static final ModConfigSpec CLIENT_SPEC;
 
-    public static final ModConfigSpec.ConfigValue<Long> CHESS_TIME_CONTROL;
-    public static final ModConfigSpec.ConfigValue<Long> GO_TIME_CONTROL;
-    public static final ModConfigSpec.ConfigValue<String> WHITE_SQUARE_COLOR;
-    public static final ModConfigSpec.ConfigValue<String> WHITE_SQUARE_COLOR_2;
-    public static final ModConfigSpec.ConfigValue<String> BLACK_SQUARE_COLOR;
+    public static final ModConfigSpec.ConfigValue<Boolean> SHOW_COORDINATES;
 
     static {
-        SERVER_SPEC = SERVER_BUILDER.build();
+        ENABLE_ELO_SYSTEM = SERVER_BUILDER
+                .comment("Where")
+                .translation("game_night.configuration.enable_elo_system")
+                .define("enable_elo_system", true);
 
-        WHITE_SQUARE_COLOR_2 = CLIENT_BUILDER
-                .comment("ARGB hex color for light board squares. Example: #FFFFFFFF")
-                .translation("config.game_night.board.white_square_color")
-                .define("white_square_color", "#FFFFFFFF", GNConfig::validateHexColor);
+        SERVER_SPEC = SERVER_BUILDER.build();
 
         CLIENT_BUILDER.push("chess");
 
-        CHESS_TIME_CONTROL = CLIENT_BUILDER
-                .comment("Default time (in seconds) on the clocks")
-                .translation("config.game_night.chess.time_control")
-                .define("time_control", 600L);
+        SHOW_COORDINATES = CLIENT_BUILDER
+                .comment("Show square coordinates on the edge of the board")
+                .translation("game_night.configuration.chess.show_coordinates")
+                .define("show_coordinates", true);
 
-        WHITE_SQUARE_COLOR = CLIENT_BUILDER
-                .comment("ARGB hex color for light board squares. Example: #FFFFFFFF")
-                .translation("config.game_night.board.white_square_color")
-                .define("white_square_color", "#FFFFFFFF", GNConfig::validateHexColor);
-
-        BLACK_SQUARE_COLOR = CLIENT_BUILDER
-                .comment("ARGB hex color for dark board squares. Example: #FF000000")
-                .translation("config.game_night.board.black_square_color")
-                .define("black_square_color", "#FF000000", GNConfig::validateHexColor);
-
-        CLIENT_BUILDER.pop();
-
-        CLIENT_BUILDER.push("Monopoly");
-        CLIENT_BUILDER.pop();
-
-        CLIENT_BUILDER.push("Connect 4");
-        CLIENT_BUILDER.pop();
-
-        CLIENT_BUILDER.push("Uno");
-        CLIENT_BUILDER.pop();
-
-        CLIENT_BUILDER.push("Go");
-
-        GO_TIME_CONTROL = CLIENT_BUILDER
-                .comment("Default time (in seconds) on the clocks")
-                .translation("config.game_night.go.time_control")
-                .define("time_control", 600L);
-
-        CLIENT_BUILDER.pop();
-
-        CLIENT_BUILDER.push("Poker");
         CLIENT_BUILDER.pop();
 
         CLIENT_SPEC = CLIENT_BUILDER.build();
-    }
-
-    private static boolean validateHexColor(final Object obj) {
-        return obj instanceof String hex && hex.matches("^#[0-9A-Fa-f]{8}$");
     }
 }
